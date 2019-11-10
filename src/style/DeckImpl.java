@@ -4,57 +4,64 @@ public class DeckImpl implements Deck {
 	
 	//Instance fields
 	
-	private Card[] newvar;			
-	private int _num_left_to_deal;
+	private Card[] deckOfCards;			
+	private int numLeftToDeal;
 	
+	// DeckImpl
+	/* Constructor for DeckImpl
+	 */
 	
-	
-	//Constructor
 	public DeckImpl() {
-		_num_left_to_deal = 52;
-		newvar = new Card[_num_left_to_deal];
-
-		int cidx = 0;
+		numLeftToDeal = 52;
+		deckOfCards = new Card[numLeftToDeal];
+		
+		// Calls CardImpl to construct all 52 different cards from all suits and ranks
+		int cIndex = 0;
 		for (Card.Suit s : Card.Suit.values()) {
 			for (int rank = 2; rank <= CardImpl.ACE; rank++) {
-				//System.out.println(rank);
-				newvar[cidx] = new CardImpl(rank, s);
-				cidx += 1;
+				
+				deckOfCards[cIndex] = new CardImpl(rank, s);
+				cIndex += 1;
 			}
 		}
 		
-		for (int i=0; i<newvar.length; i++) {
-			int swap_idx = i + ((int) (Math.random() * (newvar.length - i)));
-			Card tmp = newvar[i];
+		// Shuffles all cards into random order
+		for (int i=0; i<deckOfCards.length; i++) {
+			int swapIndex = i + ((int) (Math.random() * (deckOfCards.length - i)));
+			Card tmp = deckOfCards[i];
 			
-			newvar[i] = newvar[swap_idx];
+			deckOfCards[i] = deckOfCards[swapIndex];
 			
-			newvar[swap_idx] = tmp;
+			deckOfCards[swapIndex] = tmp;
 		}		
 	}
 
-	//Returns boolean
+	// hasHand
+	// Checks to see if there are still enough cards left in deck to deal another hand returns true if there is, false otherwise
+	
 	public boolean hasHand() {
-		boolean bool = false;
-		if (_num_left_to_deal >= 5) {
-			bool = true;
-		}
-		return (bool);
+		return (numLeftToDeal >= 5);
 	}
 
-	//Returns card
+	// dealNextCard
+	// Returns the next card in the deck, throws exception if there are no more cards to deal
+	// decreases the number of cards left to deal every time it is called
+	
 	public Card dealNextCard() {
-		if (_num_left_to_deal== 0) {
+		if (numLeftToDeal== 0) {
 			throw new RuntimeException();
 		}
-		Card dealtCard = newvar[nextUndealtIndex()];
-		_num_left_to_deal -= 1;
+		Card dealtCard = deckOfCards[nextUndealtIndex()];
+		numLeftToDeal -= 1;
 		return dealtCard;
 	}
 
-	//Returns PokerHand
+	// dealHand
+	// Creates a new PokerHand by using the next 5 dealt cards and returns it
+	// Throws exception if there are not enough cards left to deal
+	
 	public PokerHand dealHand() {
-		if (hasHand() == false) {
+		if (hasHand()) {
 			throw new RuntimeException("Deck does not have enough cards to deal another hand");
 		}
 		
@@ -67,25 +74,31 @@ public class DeckImpl implements Deck {
 		return h;
 	}	
 
-	//Returns void
-	public void findAndRemove(Card c) {
-		if (_num_left_to_deal == 0) {
+	// findAndRemove
+	// Returns void (does not return a value)
+	// Instead it finds and removes in the deck the card that equals the given card; if there are no more cards, then it does not remove a card and does nothing
+	
+	public void findAndRemove(Card givenCard) {
+		if (numLeftToDeal == 0) {
 			return;
 		}
 		
 		for (int i=nextUndealtIndex(); i<52; i++) {
-			if (newvar[i].equals(c)) {
-				Card tmp = newvar[i];
-				newvar[i] = newvar[nextUndealtIndex()];
-				newvar[nextUndealtIndex()] = tmp;
+			if (deckOfCards[i].equals(givenCard)) {
+				Card tmp = deckOfCards[i];
+				deckOfCards[i] = deckOfCards[nextUndealtIndex()];
+				deckOfCards[nextUndealtIndex()] = tmp;
 				dealNextCard();
 				return;
 			}
 		}
 		return;
 	}
+	
+	// nextUndealtIndex
+	// Helper method that returns the next index that contains a card
+	
 	private int nextUndealtIndex() {
-		int x = 52-_num_left_to_deal;
-		return x;
+		return 52-numLeftToDeal;
 	}
 }

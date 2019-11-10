@@ -1,6 +1,6 @@
 package tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*; 
 
 import org.junit.Test;
 
@@ -18,8 +18,8 @@ public class A2NoviceTests {
 		for (Card.Suit s : Card.Suit.values()) {
 			for (int rank = 2; rank <= CardImpl.ACE; rank++) {
 				Card card = new CardImpl(rank, s);
-				assertEquals(rank, card.r());
-				assertEquals(s, card.s());
+				assertEquals(rank, card.getRank());
+				assertEquals(s, card.getSuit());
 			}
 		}
 	}
